@@ -157,7 +157,7 @@ if __name__ == '__main__':
     # Sets weights
     if args.w is None:
         ctrl_temp = Controller(chosen_cave, evaluate=False)
-        fake_sensors = [300, 300, 100, 100, 100, 100, 100, 100, 0]
+        fake_sensors = [700, 700, 700, 700, 700, 700, 700, 200, 200, 200, 200, 200, 400]
         features_len = len(ctrl_temp.compute_features(fake_sensors))
         weights = [random.uniform(-1, 1) for i in range(0, features_len * 2)]
     else:
