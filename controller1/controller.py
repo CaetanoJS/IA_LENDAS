@@ -40,18 +40,42 @@ class Controller(controller_template.Controller):
 	monster_DOWN_RIGHT: 1-200
 	monster_DOWN: 1-200
 	oxygen: 1-400
-        
-        """ 
+
+        """
         raise NotImplementedError("This Method Must Be Implemented")
 
 
+    #gera um iterador infinito
+    def inf(i=0, step=1):
+        while True:
+            yield i
+            i+=step
 
-    def learn(self, weights) -> list:
+    def selecionaEstadoAleatorio(self):
+        
+
+
+    #funcao de aprendizado
+    def learn(self, weights):
+        #define estado inicial como um estado aleatorio
+        estado_atual = selecionaEstadoAleatorio()
+        for i in inf():
+            v = geraVizinhos()
+            melhor_vizinho = estado_atual
+            for vizinhos in v:
+                #testa os vizinhos do estado atual, indo sempre para o melhor vizinho
+                if (self.run_episode(vizinhos) > self.run_episode(melhor_vizinho)):
+                    melhor_vizinho = vizinhos
+            #depois de passar por todos vizinhos, verifica se o melhor vizinho eh melhor
+            #que o estado atual (inicial, definido como aleatorio)
+            if (self.run_episode(melhor_vizinho) > self.run_episode(estado_atual)):
+                return melhor_vizinho
+            else:
+                return estado_atual
+
         """
-        IMPLEMENT YOUR LEARNING METHOD (i.e. YOUR LOCAL SEARCH ALGORITHM) HERE
-
         HINT: you can call self.run_episode (see controller_template.py) to evaluate a given set of weights
         :param weights: initial weights of the controller (either loaded from a file or generated randomly)
         :return: the best weights found by your learning algorithm, after the learning process is over
         """
-        raise NotImplementedError("This Method Must Be Implemented")
+        #raise NotImplementedError("This Method Must Be Implemented")
