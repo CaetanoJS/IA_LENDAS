@@ -1,4 +1,5 @@
 import controller_template as controller_template
+from random import randrange, uniform
 
 
 class Controller(controller_template.Controller):
@@ -51,8 +52,29 @@ class Controller(controller_template.Controller):
             yield i
             i+=step
 
+    #gera um vetor de valores theta
     def selecionaEstadoAleatorio(self):
+        estado = []
+        #adiciona manualmente todos os valores
+        estado.append(randrange(1, 700)) #water up
+        estado.append(randrange(1, 700)) #water_UP_RIGHT
+        estado.append(randrange(1, 700)) #obstacle_UP
+        estado.append(randrange(1, 700)) #obstacle_UP_RIGHT
+        estado.append(randrange(1, 700)) #obstacle_AHEAD
+        estado.append(randrange(1, 700)) #obstacle_DOWN_RIGHT
+        estado.append(randrange(1, 700)) #obstacle_DOWN
+        estado.append(randrange(1, 200)) #monster_UP
+        estado.append(randrange(1, 200)) #monster_UP_RIGHT
+        estado.append(randrange(1, 200)) #monster_AHEAD
+        estado.append(randrange(1, 200)) #monster_DOWN_RIGHT
+        estado.append(randrange(1, 200)) #monster_DOWN
+        estado.append(randrange(1, 400)) #oxygen
+        return estado
+
+    #gera vizinhos de um estado
+    def geraVizinhos(self):
         
+
 
 
     #funcao de aprendizado
