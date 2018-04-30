@@ -5,8 +5,8 @@ class Controller(controller_template.Controller):
     def __init__(self, track, evaluate=True):
         super().__init__(track, evaluate=evaluate)
 
-    def normalize_feature(self, value, min, max):
-        #if (mode): #normalize between [-1, 1]
+    def normaliza_feature(self, value, min, max):
+        #if (mode): #normaliza entre [-1, 1]
         return (2 * (value - min)/(max - min)) - 1
         #else: return (value - min)/(max - min) #normalize between [0, 1]
 
@@ -16,7 +16,8 @@ class Controller(controller_template.Controller):
     ############## METHODS YOU NEED TO IMPLEMENT ##########################
     #######################################################################
 
-    def take_action(self, parameters: list): #-> int:
+    def take_action(self, parameters: list) -> int:
+        
         """
         :param parameters: Current weights/parameters of your controller
 
@@ -26,14 +27,38 @@ class Controller(controller_template.Controller):
 
         """
         features = self.compute_features(self.sensors)
-        return 1
+        up = parameters[0] * features[0] + parameters[1] * features[1] + parameters[2] * features[2] 
+        cair = (-1 * parameters[0]) * (-1 * features[0]) + (-1 * parameters[1]) * features[1] + (-1 *parameters[2])* features[2] 
+        
+        if (up > cair):
+        	return 1
+        else:
+        	return 2
 
     def compute_features(self, sensors):
+    	
+        #normaliza todos valores
+        water_UP = self.normaliza_feature(sensors[0], 700, 1)
+        water_UP_RIGHT = self.normaliza_feature(sensors[1], 700, 1)
+        obstacle_UP = self.normaliza_feature(sensors[2], 700, 1)
+        obstacle_UP_RIGHT = self.normaliza_feature(sensors[3], 700, 1)
+        obstacle_AHEAD = self.normaliza_feature(sensors[4], 700, 1)
+        obstacle_DOWN_RIGHT = self.normaliza_feature(sensors[5], 700, 1)
+        obstacle_DOWN = self.normaliza_feature(sensors[6], 700, 1)
+        monster_UP = self.normaliza_feature(sensors[7], 700, 1) 
+        monster_UP_RIGHT = self.normaliza_feature(sensors[8], 700, 1)
+        monster_AHEAD = self.normaliza_feature(sensors[9], 700, 1)
+        monster_DOWN_RIGHT = self.normaliza_feature(sensors[10], 700, 1)
+        monster_DOWN = self.normaliza_feature(sensors[11], 700, 1)
+        oxygen = self.normaliza_feature(sensors[12], 700, 1)
+
+
+
         #inicialmente define 3 features aleatórias só para testar
         features_list = []
-        f1 = sensors[0] + sensors[12] #tem agua acima e pouco oxigenio?
-        f2 = sensors[2] - sensors [12] #tem monstro acima e bastante oxigenio?
-        f3 = sensors[9] + sensors [2] #tem monstro a frente e ta livre pra ir pra cima?
+        f1 = oxygen - water_UP
+        f2 = obstacle_UP + monster_AHEAD
+        f3 = obstacle_DOWN + obstacle_DOWN_RIGHT + monster_DOWN_RIGHT
 
         features_list.append(f1)
         features_list.append(f2)
@@ -45,7 +70,7 @@ class Controller(controller_template.Controller):
 
         0	water_UP: 1-700
         1	water_UP_RIGHT: 1-700
-        2    obstacle_UP: 1-700
+        2   obstacle_UP: 1-700
         3	obstacle_UP_RIGHT: 1-700
         4	obstacle_AHEAD: 1-700
         5	obstacle_DOWN_RIGHT: 1-700
@@ -61,7 +86,6 @@ class Controller(controller_template.Controller):
 
     #funcao de aprendizado
     def learn(self, weights):
-        print ("net")
         #gera um estado inicial com os valores theta iniciais
         def selecionaEstadoAleatorio(self, sensors):
             estado = []
@@ -106,6 +130,7 @@ class Controller(controller_template.Controller):
                             v3[k] = estado[k] - perturbacao
                             if (vizinhos.count(v1) < 1):
                                 vizinhos.append(v3)
+            print (vizinhos)
             return vizinhos
 
         #define estado inicial como um estado aleatorio
@@ -113,20 +138,24 @@ class Controller(controller_template.Controller):
         estado_atual = list(weights)
         while (1 == 1):
             v = geraVizinhos(estado_atual)
-            melhor_vizinho = estado_atual
-
+            melhor_vizinho = estado_atual[:]
             for vizinhos in v:
                 #testa os vizinhos do estado atual, indo sempre para o melhor vizinho
-                if (self.run_episode(vizinhos) > self.run_episode(melhor_vizinho)):
-                    melhor_vizinho = vizinhos
-                    print ("melhor vizinho atual ", melhor_vizinho)
+                print (melhor_vizinho)
+                print (v)
+                melhor_atual = self.run_episode(melhor_vizinho)
+                vizinho_atual = self.run_episode([0.5, 0.6, -1.0])
+                print ("melhor vizinho atual com valor: ", melhor_atual)
+                print ("vizinho atual com valor: ", vizinho_atual)
+                if (vizinho_atual > melhor_atual):
+                    melhor_vizinho = [0.5, 0.6, -1.0]
             #depois de passar por todos vizinhos, verifica se o melhor vizinho eh melhor
             #que o estado atual (inicial, definido como aleatorio)
             if (self.run_episode(melhor_vizinho) > self.run_episode(estado_atual)):
                 print ("melhor vizinho final aqui ", melhor_vizinho)
                 return melhor_vizinho
             else:
-                print ("melhor vizinho eh o original ", melhor_vizinho)
+                print ("melhor vizinho eh o original ", estado_atual)
                 return estado_atual
 
         """
