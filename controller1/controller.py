@@ -5,7 +5,7 @@ class Controller(controller_template.Controller):
     def __init__(self, track, evaluate=True):
         super().__init__(track, evaluate=evaluate)
 
-    def normalize_feature(self, value, min, max, mode=0):
+    def normalize_feature(self, value, min, max):
         #if (mode): #normalize between [-1, 1]
         return (2 * (value - min)/(max - min)) - 1
         #else: return (value - min)/(max - min) #normalize between [0, 1]
@@ -27,7 +27,6 @@ class Controller(controller_template.Controller):
         """
         features = self.compute_features(self.sensors)
         return 1
-
 
     def compute_features(self, sensors):
         #inicialmente define 3 features aleatórias só para testar
