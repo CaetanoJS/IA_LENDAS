@@ -1,10 +1,14 @@
- import controller_template as controller_template
-from random import randrange, uniform
+import controller_template as controller_template
 
 
 class Controller(controller_template.Controller):
     def __init__(self, track, evaluate=True):
         super().__init__(track, evaluate=evaluate)
+
+    def normalize_feature(self, value, min, max, mode=0):
+        #if (mode): #normalize between [-1, 1]
+        return (2 * (value - min)/(max - min)) - 1
+        #else: return (value - min)/(max - min) #normalize between [0, 1]
 
 
 
@@ -22,7 +26,7 @@ class Controller(controller_template.Controller):
 
         """
         features = self.compute_features(self.sensors)
-        raise NotImplementedError("This Method Must Be Implemented")
+        return 1
 
 
     def compute_features(self, sensors):
@@ -56,74 +60,74 @@ class Controller(controller_template.Controller):
 
     """
 
-    #gera um iterador infinito
-    def inf(i=0, step=1):
-        while True:
-            yield i
-            i+=step
-
-    #gera um estado inicial com os valores theta iniciais
-    def selecionaEstadoAleatorio(self, sensors):
-        estado = []
-        estado.append(0.5)
-        estado.append(0.5)
-        estado.append(0.5)
-        return estado
-
-    #gera vizinhos de um estado
-    def geraVizinhos(self, estado):
-        perturbacao = 0.1
-        vizinhos = []
-
-        for i in range(len(estado)):
-            v1 = estado[:]
-            v1[i] = estado[i] + perturbacao
-            if (vizinhos.count(v1) < 1):
-                vizinhos.append(v1)
-
-            v1[i] = estado[i] - perturbacao
-            if (vizinhos.count(v1) < 1):
-                vizinhos.append(v1)
-
-            for j in range(len(v2)):
-                v2 = v1[:]
-                if (j != i):
-                    v2[j] = estado[j] + perturbacao
-                    if (vizinhos.count(v2) < 1):
-                        vizinhos.append(v2)
-
-                    v2[j] = estado[j] - perturbacao
-                    if (vizinhos.count(v2) < 1):
-                        vizinhos.append(v2)
-
-                for k in range(len(v2)):
-                    v3 = v2[:]
-                    if (j != k and j != i and k != j):
-                        v3[k] = estado[k] + perturbacao
-                        if (vizinhos.count(v1) < 1):
-                            vizinhos.append(v3)
-                        v3[k] = estado[k] - perturbacao
-                        if (vizinhos.count(v1) < 1):
-                            vizinhos.append(v3)
-        return vizinhos
-
-
     #funcao de aprendizado
     def learn(self, weights):
+        print ("net")
+        #gera um estado inicial com os valores theta iniciais
+        def selecionaEstadoAleatorio(self, sensors):
+            estado = []
+            estado.append(0.5)
+            estado.append(0.5)
+            estado.append(0.5)
+            return estado
+
+
+        #gera vizinhos de um estado
+        def geraVizinhos(estado):
+            perturbacao = 0.1
+            vizinhos = []
+
+            for i in range(len(estado)):
+                v1 = estado[:]
+                v1[i] = estado[i] + perturbacao
+                if (vizinhos.count(v1) < 1):
+                    vizinhos.append(v1)
+
+                v1[i] = estado[i] - perturbacao
+                if (vizinhos.count(v1) < 1):
+                    vizinhos.append(v1)
+
+                for j in range(len(estado)):
+                    v2 = v1[:]
+                    if (j != i):
+                        v2[j] = estado[j] + perturbacao
+                        if (vizinhos.count(v2) < 1):
+                            vizinhos.append(v2)
+
+                        v2[j] = estado[j] - perturbacao
+                        if (vizinhos.count(v2) < 1):
+                            vizinhos.append(v2)
+
+                    for k in range(len(estado)):
+                        v3 = v2[:]
+                        if (j != k and j != i and k != j):
+                            v3[k] = estado[k] + perturbacao
+                            if (vizinhos.count(v1) < 1):
+                                vizinhos.append(v3)
+                            v3[k] = estado[k] - perturbacao
+                            if (vizinhos.count(v1) < 1):
+                                vizinhos.append(v3)
+            return vizinhos
+
         #define estado inicial como um estado aleatorio
-        estado_atual = selecionaEstadoAleatorio()
-        for i in inf():
-            v = geraVizinhos(weights)
+
+        estado_atual = list(weights)
+        while (1 == 1):
+            v = geraVizinhos(estado_atual)
             melhor_vizinho = estado_atual
+
             for vizinhos in v:
                 #testa os vizinhos do estado atual, indo sempre para o melhor vizinho
                 if (self.run_episode(vizinhos) > self.run_episode(melhor_vizinho)):
                     melhor_vizinho = vizinhos
+                    print ("melhor vizinho atual ", melhor_vizinho)
             #depois de passar por todos vizinhos, verifica se o melhor vizinho eh melhor
             #que o estado atual (inicial, definido como aleatorio)
             if (self.run_episode(melhor_vizinho) > self.run_episode(estado_atual)):
+                print ("melhor vizinho final aqui ", melhor_vizinho)
                 return melhor_vizinho
             else:
+                print ("melhor vizinho eh o original ", melhor_vizinho)
                 return estado_atual
 
         """
