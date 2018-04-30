@@ -1,4 +1,5 @@
 import controller_template as controller_template
+import random
 
 
 class Controller(controller_template.Controller):
@@ -7,8 +8,9 @@ class Controller(controller_template.Controller):
 
     def normaliza_feature(self, value, min, max):
         #if (mode): #normaliza entre [-1, 1]
-        return (2 * (value - min)/(max - min)) - 1
-        #else: return (value - min)/(max - min) #normalize between [0, 1]
+        #return (2 * (value - min)/(max - min)) - 1
+        #else:
+        return (value - min)/(max - min) #normalize between [0, 1]
 
 
 
@@ -17,7 +19,7 @@ class Controller(controller_template.Controller):
     #######################################################################
 
     def take_action(self, parameters: list) -> int:
-        
+
         """
         :param parameters: Current weights/parameters of your controller
 
@@ -27,16 +29,16 @@ class Controller(controller_template.Controller):
 
         """
         features = self.compute_features(self.sensors)
-        up = parameters[0] * features[0] + parameters[1] * features[1] + parameters[2] * features[2] 
-        cair = (-1 * parameters[0]) * (-1 * features[0]) + (-1 * parameters[1]) * features[1] + (-1 *parameters[2])* features[2] 
-        
+        up = parameters[0] * features[0] + parameters[1] * features[1] + parameters[2] * features[2]
+        cair = parameters[3] * features[0] + parameters[4] * features[1] + parameters[5] * features[2]
+
         if (up > cair):
         	return 1
         else:
         	return 2
 
     def compute_features(self, sensors):
-    	
+
         #normaliza todos valores
         water_UP = self.normaliza_feature(sensors[0], 700, 1)
         water_UP_RIGHT = self.normaliza_feature(sensors[1], 700, 1)
@@ -45,7 +47,7 @@ class Controller(controller_template.Controller):
         obstacle_AHEAD = self.normaliza_feature(sensors[4], 700, 1)
         obstacle_DOWN_RIGHT = self.normaliza_feature(sensors[5], 700, 1)
         obstacle_DOWN = self.normaliza_feature(sensors[6], 700, 1)
-        monster_UP = self.normaliza_feature(sensors[7], 700, 1) 
+        monster_UP = self.normaliza_feature(sensors[7], 700, 1)
         monster_UP_RIGHT = self.normaliza_feature(sensors[8], 700, 1)
         monster_AHEAD = self.normaliza_feature(sensors[9], 700, 1)
         monster_DOWN_RIGHT = self.normaliza_feature(sensors[10], 700, 1)
@@ -96,48 +98,31 @@ class Controller(controller_template.Controller):
 
 
         #gera vizinhos de um estado
-        def geraVizinhos(estado):
-            perturbacao = 0.5
+        def geraVizinhos(estado, numVizinhos):
             vizinhos = []
-
-            for i in range(len(estado)):
-                v1 = estado[:]
-                v1[i] = estado[i] + perturbacao
-                if (vizinhos.count(v1) < 1):
-                    vizinhos.append(v1)
-
-                v1[i] = estado[i] - perturbacao
-                if (vizinhos.count(v1) < 1):
-                    vizinhos.append(v1)
-
-                for j in range(len(estado)):
-                    v2 = v1[:]
-                    if (j != i):
-                        v2[j] = estado[j] + perturbacao
-                        if (vizinhos.count(v2) < 1):
-                            vizinhos.append(v2)
-
-                        v2[j] = estado[j] - perturbacao
-                        if (vizinhos.count(v2) < 1):
-                            vizinhos.append(v2)
-
-                    for k in range(len(estado)):
-                        v3 = v2[:]
-                        if (j != k and j != i and k != j):
-                            v3[k] = estado[k] + perturbacao
-                            if (vizinhos.count(v1) < 1):
-                                vizinhos.append(v3)
-                            v3[k] = estado[k] - perturbacao
-                            if (vizinhos.count(v1) < 1):
-                                vizinhos.append(v3)
-            print (vizinhos)
+            for i in range(numVizinhos):
+	            new_weights = estado[:]
+	            disturbance = gera_ruido(new_weights)
+	            vizinhos.append(disturbance)
             return vizinhos
+
+        def gera_ruido(list):
+            list_size = len(list)
+            ruido = 0.3
+            #for each value of the state
+            for i in range(list_size):
+                rand_choice = random.randint(0, 1)
+                if(rand_choice == 0):
+                    list[i] -= ruido
+                elif(rand_choice == 1):
+                    list[i] += ruido
+            return list
 
         #define estado inicial como um estado aleatorio
 
-        estado_atual = [-1.5, -0.5, 3]
+        estado_atual = [0.7, 0.7, 1.3, 1.3, 1.3, 0.7]
         while (1 == 1):
-            v = geraVizinhos(estado_atual)
+            v = geraVizinhos(estado_atual, 20)
             melhor_vizinho = estado_atual[:]
             for vizinhos in v:
                 #testa os vizinhos do estado atual, indo sempre para o melhor vizinho
