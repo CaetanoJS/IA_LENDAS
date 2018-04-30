@@ -58,9 +58,10 @@ class Controller(controller_template.Controller):
 
         #inicialmente define 3 features aleatórias só para testar
         features_list = []
-        f1 = oxygen - water_UP
-        f2 = obstacle_UP + monster_AHEAD
-        f3 = obstacle_DOWN + obstacle_DOWN_RIGHT + monster_DOWN_RIGHT
+        f1 = (1/(oxygen + 0.01)) + (1/(water_UP+0.1)) +(1/(water_UP_RIGHT+0.1))
+        f2 = (1/(obstacle_AHEAD + 0.01)) + obstacle_UP + obstacle_UP_RIGHT - obstacle_DOWN - obstacle_DOWN_RIGHT
+        f3 = (1/(monster_AHEAD + 0.01)) + monster_UP + monster_UP_RIGHT + obstacle_UP + obstacle_UP_RIGHT - (
+        obstacle_DOWN) - obstacle_DOWN_RIGHT
 
         features_list.append(f1)
         features_list.append(f2)
@@ -108,7 +109,7 @@ class Controller(controller_template.Controller):
 
         def gera_ruido(list):
             list_size = len(list)
-            ruido = 0.3
+            ruido = 0.35
             #for each value of the state
             for i in range(list_size):
                 rand_choice = random.randint(0, 1)
@@ -120,7 +121,7 @@ class Controller(controller_template.Controller):
 
         #define estado inicial como um estado aleatorio
 
-        estado_atual = [0.7, 0.7, 1.3, 1.3, 1.3, 0.7]
+        estado_atual = [0, 0, 0, 0, 0, 0]
         while (1 == 1):
             v = geraVizinhos(estado_atual, 20)
             melhor_vizinho = estado_atual[:]
