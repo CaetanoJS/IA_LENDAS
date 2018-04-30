@@ -97,7 +97,7 @@ class Controller(controller_template.Controller):
 
         #gera vizinhos de um estado
         def geraVizinhos(estado):
-            perturbacao = 0.1
+            perturbacao = 0.5
             vizinhos = []
 
             for i in range(len(estado)):
@@ -135,28 +135,27 @@ class Controller(controller_template.Controller):
 
         #define estado inicial como um estado aleatorio
 
-        estado_atual = list(weights)
+        estado_atual = [-1.5, -0.5, 3]
         while (1 == 1):
             v = geraVizinhos(estado_atual)
             melhor_vizinho = estado_atual[:]
             for vizinhos in v:
                 #testa os vizinhos do estado atual, indo sempre para o melhor vizinho
                 print (melhor_vizinho)
-                print (v)
                 melhor_atual = self.run_episode(melhor_vizinho)
-                vizinho_atual = self.run_episode([0.5, 0.6, -1.0])
+                vizinho_atual = self.run_episode(vizinhos)
                 print ("melhor vizinho atual com valor: ", melhor_atual)
                 print ("vizinho atual com valor: ", vizinho_atual)
                 if (vizinho_atual > melhor_atual):
-                    melhor_vizinho = [0.5, 0.6, -1.0]
+                    melhor_vizinho = vizinhos[:]
             #depois de passar por todos vizinhos, verifica se o melhor vizinho eh melhor
             #que o estado atual (inicial, definido como aleatorio)
             if (self.run_episode(melhor_vizinho) > self.run_episode(estado_atual)):
                 print ("melhor vizinho final aqui ", melhor_vizinho)
-                return melhor_vizinho
+                estado_atual = melhor_vizinho[:]
             else:
                 print ("melhor vizinho eh o original ", estado_atual)
-                return estado_atual
+                pass
 
         """
         HINT: you can call self.run_episode (see controller_template.py) to evaluate a given set of weights
