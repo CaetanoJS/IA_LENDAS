@@ -90,12 +90,11 @@ class Controller(controller_template.Controller):
     #funcao de aprendizado
     def learn(self, weights):
         #gera um estado inicial com os valores theta iniciais
-        def selecionaEstadoAleatorio(self, sensors):
-            estado = []
-            estado.append(0.5)
-            estado.append(0.5)
-            estado.append(0.5)
-            return estado
+        def geraCandidatosAleatorios(k):
+            candidato = []
+            for i in range(k):
+                candidato[i] = randint(-20,20)
+            return candidato
 
         #gera vizinhos de um estado
         def geraVizinhos(estado, k):
@@ -119,17 +118,19 @@ class Controller(controller_template.Controller):
                     list[i] += ruido
             return list
 
-        #define estado inicial como um estado aleatorio
-
-        candidatos_iniciais = [[1, 1, 1, 1, 1, 1],[2, 2, 2, 2, 2, 2],[3, 3, 3, 3, 3, 3],[4, 4, 4, 4, 4, 4],[5, 5, 5, 5, 5, 5]]
-        candidatos_atuais = candidatos_iniciais[:]
 
         #numero de candidatos e de vizinhos expandidos a partir de cada candidato
         k = 5
+
+        #candidatos_atuais inicia com k candidatos aleatorios
+        candidatos_atuais = geraCandidatosAleatorios(k)
+
+        #k_melhores_atual vai armazenar um score e o candidato que conseguiu o score
         k_melhores_atual = []
-        #vizinhos contem 25 candidatos
+
+        #vizinhos contem k^2 candidatos
         vizinhos = geraVizinhos(candidatos_atuais, k)
-        
+
         while (1 == 1):
             #o for termina com os k melhores vizinhos da lista "vizinhos" e roda de novo a partir deles
             for v in vizinhos:
