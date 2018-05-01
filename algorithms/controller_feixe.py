@@ -91,17 +91,25 @@ class Controller(controller_template.Controller):
     def learn(self, weights):
         #gera um estado inicial com os valores theta iniciais
         def geraCandidatosAleatorios(k):
-            candidato = []
+            #gera um candidato aleatorio para a lista dos k candidatos
+            def geraPesos(p):
+                candidato = []
+                for i in range(p):
+                    candidato.append(random.uniform(-20,20))
+                return candidato
+            #preenche a lista de k candidatos aleatorios
+            candidatos = []
             for i in range(k):
-                candidato[i] = randint(-20,20)
-            return candidato
+                for j in range(len(weights)):
+                    candidatos.append(geraPesos(len(weights)))
+            return candidatos
 
-        #gera vizinhos de um estado
-        def geraVizinhos(estado, k):
+        #gera vizinhos de um candidato
+        def geraVizinhos(candidato, k):
             vizinhos = []
             for i in range(k):
                 for j in range(k):
-                    new_weights = estado[i][:]
+                    new_weights = candidato[i].copy()
                     disturbance = gera_ruido(new_weights)
                     vizinhos.append(disturbance)
             return vizinhos
@@ -121,16 +129,13 @@ class Controller(controller_template.Controller):
 
         #numero de candidatos e de vizinhos expandidos a partir de cada candidato
         k = 5
-
         #candidatos_atuais inicia com k candidatos aleatorios
         candidatos_atuais = geraCandidatosAleatorios(k)
-
-        #k_melhores_atual vai armazenar um score e o candidato que conseguiu o score
-        k_melhores_atual = []
-
+        #k_melhores_atual vai armazenar uma lista com scores e o candidato que conseguiu cada score
+        k_melhores_atual = [] # <<<<<<--------------- EH UMA LISTA DE TUPLAS (SCORE, CANDIDATO[])
         #vizinhos contem k^2 candidatos
         vizinhos = geraVizinhos(candidatos_atuais, k)
-
+        print (len(vizinhos))
         while (1 == 1):
             #o for termina com os k melhores vizinhos da lista "vizinhos" e roda de novo a partir deles
             for v in vizinhos:
@@ -139,13 +144,14 @@ class Controller(controller_template.Controller):
                 #decide se vai entrar ou nao na lista dos k_melhores do momento
                 for i in range(k):
                     if(len(k_melhores_atual) < k):
-                        k_melhores.append([score_atual,v])
+                        k_melhores_atual.append([score_atual,v])
                     else:
                         if(k_melhores_atual[i][0] < score_atual):
                             k_melhores_atual[i] = [score_atual,v]
-            vizinhos = k_melhores_atual[:]
-
-            print ("k_melhores ate aqui: ", vizinhos)
+                            break
+            for i in range(len(k_melhores_atual)):
+                vizinhos[i] = k_melhores_atual[i][1]
+                print ("k_melhores ate aqui: ", vizinhos[i])
             pass
 
         #raise NotImplementedError("This Method Must Be Implemented")
