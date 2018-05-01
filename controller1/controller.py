@@ -29,8 +29,9 @@ class Controller(controller_template.Controller):
 
         """
         features = self.compute_features(self.sensors)
-        up = parameters[0] * features[0] + parameters[1] * features[1] + parameters[2] * features[2]
-        cair = parameters[3] * features[0] + parameters[4] * features[1] + parameters[5] * features[2]
+        f0,f1,f2 = features[0], features[1], features[2]
+        up = parameters[0] * f0 + parameters[1] * f1 + parameters[2] * f2
+        cair = parameters[3] * f0 + parameters[4] * f1 + parameters[5] * f2
 
         if (up > cair):
         	return 1
@@ -54,14 +55,29 @@ class Controller(controller_template.Controller):
         monster_DOWN = self.normaliza_feature(sensors[11], 700, 1)
         oxygen = self.normaliza_feature(sensors[12], 700, 1)
 
-
-
-        #inicialmente define 3 features aleatórias só para testar
         features_list = []
-        f1 = (1/(oxygen + 0.01)) + (1/(water_UP+0.1)) +(1/(water_UP_RIGHT+0.1))
-        f2 = (1/(obstacle_AHEAD + 0.01)) + obstacle_UP + obstacle_UP_RIGHT - obstacle_DOWN - obstacle_DOWN_RIGHT
-        f3 = (1/(monster_AHEAD + 0.01)) + monster_UP + monster_UP_RIGHT + obstacle_UP + obstacle_UP_RIGHT - (
-        obstacle_DOWN) - obstacle_DOWN_RIGHT
+        a = (1/(obstacle_AHEAD + 0.1)) #max 10 min 0.9090909091
+        b = (1/(obstacle_DOWN + 0.1))  #max 10 min 0.9090909091
+        c = (1/(obstacle_DOWN_RIGHT + 0.1))  #max 10 min 0.9090909091
+        d = (1/(monster_AHEAD + 0.1)) #max 10 min 0.9090909091
+        e = (1/(monster_DOWN + 0.1))
+        f = (1/(monster_DOWN_RIGHT + 0.1))
+        g = (1/(obstacle_UP + 0.1))
+        h = (1/(obstacle_UP_RIGHT + 0.1))
+        i = (1/(monster_UP + 0.1))
+        j = (1/(monster_UP_RIGHT + 0.1))
+        k = (1/(water_UP + 0.1))
+        l = (1/(water_UP_RIGHT + 0.1))
+
+        f1 = (k/(oxygen + 0.1)) + l
+        f1 = self.normaliza_feature(f1, 110, 1.7355371901)
+
+        #max 30 min 2.7272727273    20.1    1.9181818182
+        f2 = (a + b + c)/(g + h + 0.1)
+        f2 = self.normaliza_feature(f2, 15.6398104264, 0.1356842103)
+
+        f3 = (d + f + e)/(i + j + 0.1)
+        f3 = self.normaliza_feature(f3, 15.6398104264, 0.1356842103)
 
         features_list.append(f1)
         features_list.append(f2)
@@ -109,21 +125,24 @@ class Controller(controller_template.Controller):
 
         def gera_ruido(list):
             list_size = len(list)
-            ruido = 0.35
+            ruido = 0.
             #for each value of the state
             for i in range(list_size):
                 rand_choice = random.randint(0, 1)
                 if(rand_choice == 0):
-                    list[i] -= ruido
+                    list[i] -= ruido #random.uniform(0, 10)
                 elif(rand_choice == 1):
-                    list[i] += ruido
+                    list[i] += ruido #random.uniform(0, 10)
             return list
 
         #define estado inicial como um estado aleatorio
 
-        estado_atual = [0, 0, 0, 0, 0, 0]
+        # estado_atual = [random.uniform(-1, 1), random.uniform(-1, 1),random.uniform(-1, 1),
+        # random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1),
+        # random.uniform(-1, 1)]
+        estado_atual = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
         while (1 == 1):
-            v = geraVizinhos(estado_atual, 20)
+            v = geraVizinhos(estado_atual, 60)
             melhor_vizinho = estado_atual[:]
             for vizinhos in v:
                 #testa os vizinhos do estado atual, indo sempre para o melhor vizinho
