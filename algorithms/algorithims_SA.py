@@ -37,7 +37,7 @@
 
                 if (variacao_E > 0):
                     print("Variação positiva")
-                    estado_atual = estado_candidato
+                    estado_atual = estado_candidato[:]
 
                 elif(variacao_E < 0):
                     value = math.exp(variacao_E/T)
@@ -49,5 +49,8 @@
 
                     if(verifica_prob < value):
                         print("Acertou probabilidade")
-                        estado_atual = estado_candidato
+                        estado_atual = estado_candidato[:]
 
+
+a = geraVizinhos[1,1,1,1,1]
+print(a)
