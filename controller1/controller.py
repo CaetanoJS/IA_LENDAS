@@ -9,9 +9,9 @@ class Controller(controller_template.Controller):
 
     def normaliza_feature(self, value, min, max):
         #if (mode): #normaliza entre [-1, 1]
-        #return (2 * (value - min)/(max - min)) - 1
+        return (2 * (value - min)/(max - min)) - 1
         #else:
-        return (value - min)/(max - min) #normalize between [0, 1]
+        #return (value - min)/(max - min) #normalize between [0, 1]
 
 
 
@@ -32,7 +32,7 @@ class Controller(controller_template.Controller):
         features = self.compute_features(self.sensors)
         f0,f1,f2,f3 = features[0], features[1], features[2], features[3]
         up = parameters[0] * f0 + parameters[1] * f1 + parameters[2] * f2 + parameters[3] * f3
-        cair = parameters[3] * f0 + parameters[4] * f1 + parameters[5] * f2 + parameters[3] * f3
+        cair = parameters[4] * f0 + parameters[5] * f1 + parameters[6] * f2 + parameters[7] * f3
 
         if (up > cair):
         	return 1
@@ -71,10 +71,14 @@ class Controller(controller_template.Controller):
         # l = (1/(water_UP_RIGHT + 0.1))
 
         f1 = (obstacle_AHEAD + obstacle_DOWN + (obstacle_DOWN_RIGHT)*2)
-        f2 = ((monster_AHEAD)**2) + monster_DOWN_RIGHT + monster_UP_RIGHT
+        f2 = ((monster_AHEAD)*2) + (monster_DOWN_RIGHT*2) + monster_UP_RIGHT
         f3 = (obstacle_UP + obstacle_DOWN)*2
-        f4 = ((oxygen)*2) + water_UP + water_UP_RIGHT
+        f4 = ((oxygen)*3) + ((water_UP)*2) + (water_UP_RIGHT * 2)
 
+        f1 = self.normaliza_feature(f1, -1, 4)
+        f2 = self.normaliza_feature(f2, -1, 5)
+        f3 = self.normaliza_feature(f3, -1, 4)
+        f4 = self.normaliza_feature(f4, -1, 7)
 
         features_list.append(f1)
         features_list.append(f2)
@@ -118,9 +122,7 @@ class Controller(controller_template.Controller):
     def learn(self, weights):
 
 
-
-
-        estado_atual = self.geraVizinhos([1,1,1,1,1,1,1,1,])
+        estado_atual = self.geraVizinhos([1,1,1,1,1,1,1,1])
         min_temperatura = 0
         T = 400
         while 1==1:
