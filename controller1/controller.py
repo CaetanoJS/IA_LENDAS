@@ -8,9 +8,9 @@ class Controller(controller_template.Controller):
 
     def normaliza_feature(self, value, min, max):
         #if (mode): #normaliza entre [-1, 1]
-        #return (2 * (value - min)/(max - min)) - 1
+        return (2 * (value - min)/(max - min)) - 1
         #else:
-        return (value - min)/(max - min) #normalize between [0, 1]
+        #return (value - min)/(max - min) #normalize between [0, 1]
 
 
 
@@ -29,9 +29,9 @@ class Controller(controller_template.Controller):
 
         """
         features = self.compute_features(self.sensors)
-        f0,f1,f2 = features[0], features[1], features[2]
-        up = parameters[0] * f0 + parameters[1] * f1 + parameters[2] * f2
-        cair = parameters[3] * f0 + parameters[4] * f1 + parameters[5] * f2
+        f0,f1,f2,f3 = features[0], features[1], features[2], features[3]
+        up = parameters[0] * f0 + parameters[1] * f1 + parameters[2] * f2 + parameters[3] * f3
+        cair = parameters[4] * f0 + parameters[5] * f1 + parameters[6] * f2 + parameters[7] * f3
 
         if (up > cair):
         	return 1
@@ -41,19 +41,19 @@ class Controller(controller_template.Controller):
     def compute_features(self, sensors):
 
         #normaliza todos valores
-        water_UP = self.normaliza_feature(sensors[0], 700, 1)
-        water_UP_RIGHT = self.normaliza_feature(sensors[1], 700, 1)
-        obstacle_UP = self.normaliza_feature(sensors[2], 700, 1)
-        obstacle_UP_RIGHT = self.normaliza_feature(sensors[3], 700, 1)
-        obstacle_AHEAD = self.normaliza_feature(sensors[4], 700, 1)
-        obstacle_DOWN_RIGHT = self.normaliza_feature(sensors[5], 700, 1)
-        obstacle_DOWN = self.normaliza_feature(sensors[6], 700, 1)
-        monster_UP = self.normaliza_feature(sensors[7], 700, 1)
-        monster_UP_RIGHT = self.normaliza_feature(sensors[8], 700, 1)
-        monster_AHEAD = self.normaliza_feature(sensors[9], 700, 1)
-        monster_DOWN_RIGHT = self.normaliza_feature(sensors[10], 700, 1)
-        monster_DOWN = self.normaliza_feature(sensors[11], 700, 1)
-        oxygen = self.normaliza_feature(sensors[12], 700, 1)
+        water_UP = self.normaliza_feature(sensors[0], 1, 700)
+        water_UP_RIGHT = self.normaliza_feature(sensors[1], 1, 700)
+        obstacle_UP = self.normaliza_feature(sensors[2], 1, 700)
+        obstacle_UP_RIGHT = self.normaliza_feature(sensors[3], 1, 700)
+        obstacle_AHEAD = self.normaliza_feature(sensors[4], 1, 700)
+        obstacle_DOWN_RIGHT = self.normaliza_feature(sensors[5], 1, 700)
+        obstacle_DOWN = self.normaliza_feature(sensors[6], 1, 700)
+        monster_UP = self.normaliza_feature(sensors[7], 1, 200)
+        monster_UP_RIGHT = self.normaliza_feature(sensors[8], 1, 200)
+        monster_AHEAD = self.normaliza_feature(sensors[9], 1, 200)
+        monster_DOWN_RIGHT = self.normaliza_feature(sensors[10], 1, 200)
+        monster_DOWN = self.normaliza_feature(sensors[11], 1, 200)
+        oxygen = self.normaliza_feature(sensors[12], 1, 400)
 
         features_list = []
         a = (1/(obstacle_AHEAD + 0.1)) #max 10 min 0.9090909091
