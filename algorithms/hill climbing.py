@@ -1,21 +1,4 @@
-
-    #######################################################################
-    ############## METHODS YOU NEED TO IMPLEMENT ##########################
-    #######################################################################
-
-    def take_action(self, parameters: list) -> int:
-
-        """
-        :param parameters: Current weights/parameters of your controller
-
-        :return: An integer corresponding to an action:
-        1 - UP
-        2 - NOTHING (GRAVITY)
-
-        """
-        features = self.compute_features(self.sensors)
-        f0,f1,f2,f3,f4,f5 = features[0], features[1], features[2],features[3],features[4],features[5]
-  #funcao de aprendizado
+#funcao de aprendizado
     def hill_climbing(self, weights):
 
         #gera vizinhos de um estado
